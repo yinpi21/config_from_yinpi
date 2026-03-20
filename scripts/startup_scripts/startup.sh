@@ -16,7 +16,7 @@ if [ -f "$SCRIPTS/wallpaper_scripts/safe_change_wallpaper.sh" ]; then
 fi
 
 # Installation des paquets supplémentaires si absents
-if [ ! -x "$HOME/.nix-profile/bin/bat" ]; then
+if [ ! -x "$HOME/.nix-profile/bin/bat" ] || [ ! -d "$HOME/.nix-profile/share/icons/Papirus" ]; then
     dunstify -r "$IDB" -t 0 "Installing additional packages..."
     PACKAGES="
     nixpkgs#autotiling
@@ -28,6 +28,7 @@ if [ ! -x "$HOME/.nix-profile/bin/bat" ]; then
     nixpkgs#ripgrep
     nixpkgs#flameshot
     nixpkgs#zoxide
+    nixpkgs#papirus-icon-theme
     "
     if nix profile install $PACKAGES --impure > /dev/null 2>&1; then
         dunstify -r "$IDB" -t 5000 "Packages installed [OK]"
