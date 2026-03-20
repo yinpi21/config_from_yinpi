@@ -19,8 +19,16 @@ err()  { echo -e "\033[1;31m✗\033[0m  $*"; exit 1; }
 
 # ── Clone ou update ───────────────────────────────────────────────────
 if [ -d "$DEST/.git" ]; then
-    info "Repo déjà présent, mise à jour..."
-    git -C "$DEST" pull --ff-only
+    current_remote=$(git -C "$DEST" remote get-url origin 2>/dev/null || echo "")
+    if [ "$current_remote" != "$REPO_URL" ]; then
+        info "Remote incorrect ($current_remote), correction..."
+        git -C "$DEST" remote set-url origin "$REPO_URL"
+        git -C "$DEST" fetch origin
+        git -C "$DEST" reset --hard origin/main
+    else
+        info "Repo déjà présent, mise à jour..."
+        git -C "$DEST" pull --ff-only
+    fi
     ok "Repo à jour"
 else
     info "Clonage du repo dans $DEST..."
