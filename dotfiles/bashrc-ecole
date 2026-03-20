@@ -37,11 +37,6 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# Zoxide si disponible
-if command -v zoxide &>/dev/null; then
-    eval "$(zoxide init bash)"
-    alias cd='z'
-fi
 
 # ────────────────────────────────────────────────
 # 5. Complétion
@@ -200,3 +195,9 @@ _pp() {
 PROMPT_COMMAND='_e=$?'
 
 PS1='(づ ◕‿‿◕)づ \[\e[32m\]$(_pp)\[\e[0m\]$([ $_e -ne 0 ] && printf " \[\e[31m\][✗ %s]\[\e[0m\]" "$_e") \$ '
+
+# Zoxide — doit être en dernier
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init bash)"
+    alias cd='z'
+fi
