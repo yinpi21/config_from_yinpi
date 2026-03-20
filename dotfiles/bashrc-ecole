@@ -221,8 +221,8 @@ _prompt_path() {
 _prompt_git() {
     [ -z "$_PROMPT_GIT_ROOT" ] && return
     local branch dirty=""
-    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
-    [ -n "$(git status --porcelain 2>/dev/null)" ] && dirty="*"
+    branch=$(timeout 0.3 git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+    [ -n "$(timeout 0.3 git status --porcelain 2>/dev/null)" ] && dirty="*"
     echo " (${branch}${dirty})"
 }
 
@@ -263,7 +263,7 @@ _PROMPT_EXIT=$?
 _PROMPT_ELAPSED=$(( SECONDS - ${_PROMPT_TIMER:-$SECONDS} ))
 unset _PROMPT_TIMER
 if [ "$_PROMPT_LAST_PWD" != "$PWD" ]; then
-    _PROMPT_GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+    _PROMPT_GIT_ROOT=$(timeout 0.5 git rev-parse --show-toplevel 2>/dev/null)
     _PROMPT_LAST_PWD="$PWD"
 fi
 '
