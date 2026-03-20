@@ -3789,7 +3789,7 @@ include "%L"
 <dead_circumflex> <dead_acute> <E>	: "Ế" U1EBE # LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE
 <dead_circumflex> <dead_acute> <O>	: "Ố" U1ED0 # LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND ACUTE
 <dead_circumflex> <dead_acute> <Eacute>	: "Ế" U1EBE # LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE
-<dead_circumflex> <backslash>     	: "^\" # LIGATURE: U005E U005C
+<dead_circumflex> <backslash>     	: "^\\" # LIGATURE: U005E U005C
 <dead_circumflex> <dead_diaeresis>	: "̤" U0324 # COMBINING DIAERESIS BELOW
 <dead_circumflex> <dead_tilde> <a>	: "ẫ" U1EAB # LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
 <dead_circumflex> <dead_tilde> <e>	: "ễ" U1EC5 # LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
