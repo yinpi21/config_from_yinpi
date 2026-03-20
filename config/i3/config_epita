@@ -1,0 +1,172 @@
+# i3 config file (v4) — École EPITA (NixOS)
+
+set $mod Mod4
+
+# ── Variables ──────────────────────────────────────────────────────────────────
+set $afs        ~/afs
+set $confs      ~/afs/.confs
+set $config     ~/afs/.confs/config
+set $scripts    ~/afs/.confs/scripts
+set $wallpapers ~/afs/.confs/wallpapers
+set $i3lock     ~/afs/.confs/scripts/system/i3lock.sh
+
+# Import couleurs générées par matugen
+include ~/.config/i3/colors.conf
+
+# ── Fenêtres flottantes par défaut ─────────────────────────────────────────────
+for_window [class="float_window"]    floating enable, resize set 800 600, move position center
+for_window [class="blueman-manager"] floating enable
+for_window [class="pavucontrol"]     floating enable
+for_window [title="fbgif"]           floating enable, border none, sticky enable, focus mode_toggle, resize set 1920 1080, move position center
+no_focus    [title="fbgif"]
+
+# ── Autostart ─────────────────────────────────────────────────────────────────
+
+# Symlinks AFS + outils (fzf, fd)
+exec --no-startup-id bash "$HOME/afs/config/setup-school.sh"
+exec --no-startup-id bash -c 'command -v fzf &>/dev/null || nix-env -f "<nixpkgs>" -iA fzf; command -v fd &>/dev/null || nix-env -f "<nixpkgs>" -iA fd'
+
+# Clavier Optimot
+exec_always --no-startup-id setxkbmap optimot -variant basic
+
+# XDG autostart (.desktop files)
+exec --no-startup-id dex --autostart --environment i3
+
+# Autotiling
+exec_always --no-startup-id autotiling
+
+# Picom (transparence + animations)
+exec_always --no-startup-id picom --config ~/.config/picom/picom.conf --xrender-sync-fence
+
+# Polybar
+exec_always --no-startup-id "killall -q polybar; polybar main"
+
+# NetworkManager
+exec --no-startup-id nm-applet
+
+# Wallpaper (dernier utilisé via feh)
+exec --no-startup-id $confs/.fehbg
+
+# Verrouillage auto après 5 min d'inactivité
+exec --no-startup-id xset s 300 300
+exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock --nofork
+
+# Notifications
+exec --no-startup-id /usr/bin/dunst
+
+# Script de démarrage (aklogger, check_update, user scripts...)
+exec --no-startup-id sh $scripts/startup_scripts/startup.sh
+
+# ── Apparence ─────────────────────────────────────────────────────────────────
+default_border pixel 2
+gaps outer 2
+gaps inner 4
+font pango:JetBrains Mono 11
+focus_on_window_activation focus
+floating_modifier $mod
+tiling_drag modifier titlebar
+
+# ── Focus ─────────────────────────────────────────────────────────────────────
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# ── Déplacement ───────────────────────────────────────────────────────────────
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# ── Layout ────────────────────────────────────────────────────────────────────
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+bindsym F11    fullscreen toggle
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space       focus mode_toggle
+
+# ── Workspaces ────────────────────────────────────────────────────────────────
+bindsym $mod+Tab       workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+bindsym $mod+1 workspace number "1"
+bindsym $mod+2 workspace number "2"
+bindsym $mod+3 workspace number "3"
+bindsym $mod+4 workspace number "4"
+bindsym $mod+5 workspace number "5"
+bindsym $mod+6 workspace number "6"
+bindsym $mod+7 workspace number "7"
+bindsym $mod+8 workspace number "8"
+bindsym $mod+9 workspace number "9"
+bindsym $mod+0 workspace number "10"
+
+bindsym $mod+Shift+1 move container to workspace number "1"
+bindsym $mod+Shift+2 move container to workspace number "2"
+bindsym $mod+Shift+3 move container to workspace number "3"
+bindsym $mod+Shift+4 move container to workspace number "4"
+bindsym $mod+Shift+5 move container to workspace number "5"
+bindsym $mod+Shift+6 move container to workspace number "6"
+bindsym $mod+Shift+7 move container to workspace number "7"
+bindsym $mod+Shift+8 move container to workspace number "8"
+bindsym $mod+Shift+9 move container to workspace number "9"
+bindsym $mod+Shift+0 move container to workspace number "10"
+
+# ── i3 ────────────────────────────────────────────────────────────────────────
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+
+# ── Terminal ──────────────────────────────────────────────────────────────────
+bindsym $mod+Return       exec --no-startup-id sh $scripts/system/open_afs.sh
+bindsym $mod+Ctrl+Return  exec --no-startup-id alacritty
+bindsym $mod+Shift+Return exec --no-startup-id sh $scripts/system/double.sh
+
+# ── Applications ──────────────────────────────────────────────────────────────
+bindsym $mod+q       kill
+bindsym $mod+d       exec --no-startup-id rofi -show drun -dpi 1
+bindsym $mod+t       exec --no-startup-id rofi -show window -dpi 1
+
+bindsym $mod+e       exec --no-startup-id emacs
+bindsym $mod+Shift+f exec --no-startup-id firefox
+bindsym $mod+Shift+t exec --no-startup-id nix-shell -p xfce.thunar --run thunar
+bindsym $mod+Shift+o exec --no-startup-id firefox 'https://outlook.office.com/mail/?culture=fr-fr&country=fr'
+bindsym $mod+Shift+p exec --no-startup-id pavucontrol
+bindsym $mod+b       exec --no-startup-id blueman-manager
+bindsym $mod+o       exec --no-startup-id bash -c '[ ! -d $HOME/Obsidian ] && git clone git@github.com:yinpi21/Obsidian.git $HOME/Obsidian; NIXPKGS_ALLOW_UNFREE=1 nix-shell -p obsidian --run "obsidian $HOME/Obsidian"'
+
+# Note rapide dans emacs (fenêtre flottante)
+bindsym $mod+n exec --no-startup-id alacritty --class "float_window" -e sh $scripts/system/note.sh
+
+# ── Menus ─────────────────────────────────────────────────────────────────────
+bindsym $mod+Shift+e exec --no-startup-id sh $scripts/menus/power_menu.sh
+bindsym $mod+c       exec --no-startup-id sh $scripts/menus/epita_menu.sh
+bindsym $mod+Shift+w exec --no-startup-id sh $scripts/menus/wallpaper_menu.sh
+
+# ── Wallpaper ─────────────────────────────────────────────────────────────────
+bindsym $mod+Shift+b exec --no-startup-id sh $scripts/wallpaper_scripts/random_wallpaper.sh
+
+# ── Verrou ────────────────────────────────────────────────────────────────────
+bindsym $mod+i exec --no-startup-id sh $i3lock
+bindsym $mod+l exec --no-startup-id sh $i3lock
+
+# ── Screenshot ────────────────────────────────────────────────────────────────
+bindsym $mod+Shift+s exec --no-startup-id flameshot gui
+bindsym Print        exec --no-startup-id flameshot gui
+
+# ── Fun ───────────────────────────────────────────────────────────────────────
+bindsym $mod+Ctrl+f exec --no-startup-id sh $scripts/flashbang/flashbang.sh
+
+# ── Audio ─────────────────────────────────────────────────────────────────────
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute     exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym XF86AudioPlay        exec --no-startup-id playerctl play-pause
+bindsym XF86AudioNext        exec --no-startup-id playerctl next
+bindsym XF86AudioPrev        exec --no-startup-id playerctl previous
+
+# ── Luminosité ────────────────────────────────────────────────────────────────
+bindsym XF86MonBrightnessUp   exec --no-startup-id sh $scripts/system/brightness.sh up
+bindsym XF86MonBrightnessDown exec --no-startup-id sh $scripts/system/brightness.sh down

@@ -1,0 +1,273 @@
+# ~/.bashrc (école - NixOS EPITA)
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# ────────────────────────────────────────────────
+# 1. PATH
+# ────────────────────────────────────────────────
+[ -d ~/afs/bin ]     && export PATH=~/afs/bin:$PATH
+[ -d ~/.local/bin ]  && export PATH=~/.local/bin:$PATH
+
+# ────────────────────────────────────────────────
+# 2. Environnement
+# ────────────────────────────────────────────────
+export LANG=en_US.utf8
+export NNTPSERVER="news.epita.fr"
+export EDITOR=emacs
+export VISUAL=emacs
+export PGDATA="$HOME/postgres_data"
+export PGHOST="/tmp"
+
+# ────────────────────────────────────────────────
+# 3. Historique
+# ────────────────────────────────────────────────
+HISTSIZE=10000
+HISTFILESIZE=20000
+HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
+
+# ────────────────────────────────────────────────
+# 4. Navigation
+# ────────────────────────────────────────────────
+shopt -s autocd
+shopt -s cdspell
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Zoxide si disponible
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init bash)"
+    alias cd='z'
+fi
+
+# ────────────────────────────────────────────────
+# 5. Complétion
+# ────────────────────────────────────────────────
+bind 'set completion-ignore-case on'
+
+[ -f /usr/share/bash-completion/bash_completion ] && \
+    . /usr/share/bash-completion/bash_completion
+
+bind "set colored-stats on"
+bind "set visible-stats on"
+bind "set colored-completion-prefix on"
+bind "set show-all-if-ambiguous on"
+bind "set menu-complete-display-prefix on"
+
+# ────────────────────────────────────────────────
+# 6. Couleurs & aliases système
+# ────────────────────────────────────────────────
+if command -v dircolors &>/dev/null; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+fi
+
+export LS_COLORS="di=1;34:ln=1;36:ex=1;32:fi=0"
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# ────────────────────────────────────────────────
+# 7. EPITA & développement
+# ────────────────────────────────────────────────
+alias afs='cd ~/afs/'
+alias makec="make && make check && make clean"
+alias gcw="gcc -std=c99 -pedantic -Werror -Wall -Wextra -Wvla"
+alias cf="clang-format -i"
+alias double='alacritty --working-directory "$PWD" > /dev/null 2>&1 & disown'
+
+# Applique clang-format sur tout le repo courant
+cfe() {
+    local here="$PWD"
+    cd "$(git rev-parse --show-toplevel)"
+    cp "$HOME/afs/.confs/config/clang-format/clang-format-c-current" ./.clang-format
+    clang-format-epita
+    rm .clang-format
+    cd "$here"
+}
+
+# ────────────────────────────────────────────────
+# 8. Git
+# ────────────────────────────────────────────────
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gpu='git pull'
+alias gd='git diff'
+alias gl="git log --graph --abbrev-commit --decorate \
+    --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) \
+%C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n          \
+%C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+
+# Va à la racine du repo git courant
+gr() {
+    local root
+    root=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [ -n "$root" ]; then cd "$root"
+    else echo "Not in a git repository." >&2; return 1
+    fi
+}
+
+# ────────────────────────────────────────────────
+# 9. Utilitaires
+# ────────────────────────────────────────────────
+extract() {
+    for f in "$@"; do
+        if [ -f "$f" ]; then
+            case "$f" in
+                *.tar.bz2)  tar xvjf "$f"   ;;
+                *.tar.gz)   tar xvzf "$f"   ;;
+                *.bz2)      bunzip2 "$f"     ;;
+                *.gz)       gunzip "$f"      ;;
+                *.tar)      tar xvf "$f"     ;;
+                *.tgz)      tar xvf "$f"     ;;
+                *.tbz2)     tar xvjf "$f"    ;;
+                *.zip)      unzip "$f"       ;;
+                *.Z)        uncompress "$f"  ;;
+                *)          echo "Don't know how to extract '$f'" ;;
+            esac
+        else
+            echo "'$f' is not a valid file!"
+        fi
+    done
+}
+
+copy() { cat "$@" | xsel -b; }
+
+# ────────────────────────────────────────────────
+# 10. Config
+# ────────────────────────────────────────────────
+CONFS="$HOME/afs/.confs"
+REPO="$HOME/afs/config"
+SCRIPTS="$REPO/scripts"
+WALLPAPERS="$CONFS/wallpapers"
+
+update-conf() {
+    sh "$SCRIPTS/system/update_config.sh" && source ~/.bashrc
+}
+
+alias reset-conf="bash \"$REPO/setup-school.sh\""
+alias clean-afs="sh \"$SCRIPTS/system/afs_cleaner.sh\""
+
+alias bg="sh \"$SCRIPTS/wallpaper_scripts/change_wallpaper.sh\""
+alias rbg="(sh \"$SCRIPTS/wallpaper_scripts/random_wallpaper.sh\" &)"
+alias bgdir='cd "$WALLPAPERS"'
+bgadd() { cp "$1" "$WALLPAPERS/"; }
+
+alias winpls="sed -i 's/set \$mod Mod1/set \$mod Mod4/' \"$REPO/config/i3/config_epita\" \
+    && i3-msg restart > /dev/null && echo 'Mod → WIN'"
+alias altpls="sed -i 's/set \$mod Mod4/set \$mod Mod1/' \"$REPO/config/i3/config_epita\" \
+    && i3-msg restart > /dev/null && echo 'Mod → ALT'"
+
+# ────────────────────────────────────────────────
+# 11. FZF (NixOS)
+# ────────────────────────────────────────────────
+[ -f ~/.nix-profile/share/fzf/completion.bash ]   && source ~/.nix-profile/share/fzf/completion.bash
+[ -f ~/.nix-profile/share/fzf/key-bindings.bash ] && source ~/.nix-profile/share/fzf/key-bindings.bash
+
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# ────────────────────────────────────────────────
+# 12. Prompt
+# ────────────────────────────────────────────────
+
+# Cache le git root pour éviter de l'appeler plusieurs fois par prompt
+_PROMPT_GIT_ROOT=""
+
+# Chemin intelligent : repo/…/fichier ou .../avant-dernier/dernier
+_prompt_path() {
+    local r="$_PROMPT_GIT_ROOT"
+    if [ -n "$r" ]; then
+        local repo git_rel
+        repo=$(basename "$r")
+        git_rel="${PWD#$r}"
+        git_rel="${git_rel#/}"
+        if [ -z "$git_rel" ]; then
+            echo "$repo"
+        else
+            local IFS='/' parts=()
+            read -ra parts <<< "$git_rel"
+            local n=${#parts[@]}
+            if [ "$n" -le 3 ]; then echo "${repo}/${git_rel}"
+            else echo "${repo}/.../${parts[$n-1]}"
+            fi
+        fi
+    else
+        [ "$PWD" = "$HOME" ] && { echo "yinpi"; return; }
+        local p="${PWD/#$HOME/\~}"
+        local IFS='/' parts=()
+        read -ra parts <<< "$p"
+        local n=${#parts[@]}
+        if [ "$n" -le 3 ]; then echo "$p"
+        else echo ".../${parts[$n-2]}/${parts[$n-1]}"
+        fi
+    fi
+}
+
+# Branche + * si dirty
+_prompt_git() {
+    [ -z "$_PROMPT_GIT_ROOT" ] && return
+    local branch dirty=""
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+    [ -n "$(git status --porcelain 2>/dev/null)" ] && dirty="*"
+    echo " (${branch}${dirty})"
+}
+
+# Langages détectés dans le dossier courant + racine du projet
+_prompt_langs() {
+    local langs="" d="$PWD" r="${_PROMPT_GIT_ROOT:-$PWD}"
+
+    shopt -s nullglob
+    local c_files=("$d"/*.c "$d"/*.h)
+    local cpp_files=("$d"/*.cpp "$d"/*.cc "$d"/*.cxx "$d"/*.hpp)
+    local py_files=("$d"/*.py)
+    local ml_files=("$d"/*.ml "$d"/*.mli)
+    local lisp_files=("$d"/*.lisp "$d"/*.cl "$d"/*.asd)
+    local java_files=("$d"/*.java)
+    local js_files=("$d"/*.js "$d"/*.ts "$d"/*.jsx "$d"/*.tsx)
+    shopt -u nullglob
+
+    [ ${#c_files[@]}    -gt 0 ]                                                         && langs="$langs [c]"
+    { [ ${#cpp_files[@]} -gt 0 ] || [ -f "$r/CMakeLists.txt" ]; }                      && langs="$langs [c++]"
+    { [ ${#py_files[@]}  -gt 0 ] || [ -f "$r/requirements.txt" ] || [ -f "$r/pyproject.toml" ]; } && langs="$langs [py]"
+    [ -f "$r/Cargo.toml" ]                                                              && langs="$langs [rs]"
+    { [ ${#js_files[@]}  -gt 0 ] || [ -f "$r/package.json" ]; }                        && langs="$langs [js]"
+    { [ ${#ml_files[@]}  -gt 0 ] || [ -f "$r/dune" ] || [ -f "$r/dune-project" ]; }   && langs="$langs [ml]"
+    [ ${#lisp_files[@]}  -gt 0 ]                                                        && langs="$langs [lisp]"
+    { [ ${#java_files[@]} -gt 0 ] || [ -f "$r/pom.xml" ] || [ -f "$r/build.gradle" ]; } && langs="$langs [java]"
+
+    echo "$langs"
+}
+
+# Timer : démarre à chaque commande
+trap '_PROMPT_TIMER=${_PROMPT_TIMER:-$SECONDS}' DEBUG
+
+# PROMPT_COMMAND : capture exit code, calcule le timer, rafraîchit le git root
+# Le git root n'est recalculé que si le répertoire courant change
+PROMPT_COMMAND='
+_PROMPT_EXIT=$?
+_PROMPT_ELAPSED=$(( SECONDS - ${_PROMPT_TIMER:-$SECONDS} ))
+unset _PROMPT_TIMER
+if [ "$_PROMPT_LAST_PWD" != "$PWD" ]; then
+    _PROMPT_GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+    _PROMPT_LAST_PWD="$PWD"
+fi
+'
+
+_prompt_exit()  { [ "$_PROMPT_EXIT"    -ne 0 ] && echo " \[\e[31m\][✗ $_PROMPT_EXIT]\[\e[0m\]"; }
+_prompt_timer() { [ "${_PROMPT_ELAPSED:-0}" -ge 2 ] && echo " [${_PROMPT_ELAPSED}s]"; }
+
+PS1='(づ ◕‿‿◕)づ \[\e[32m\]$(_prompt_path)\[\e[0m\]\[\e[33m\]$(_prompt_git)\[\e[0m\]\[\e[36m\]$(_prompt_langs)\[\e[0m\]$(_prompt_exit)$(_prompt_timer) $ '

@@ -1,0 +1,39 @@
+@import "colors.rasi"
+
+* { font: "JetBrainsMono Nerd Font 12"; }
+
+configuration { show-icons: false; }
+
+window {
+    transparency: "real"; location: center; anchor: center;
+    fullscreen: false; width: 30%; border: 3px solid;
+    border-radius: 8px; border-color: @selected; background-color: @background;
+}
+
+mainbox { spacing: 0px; background-color: transparent; children: ["inputbar","listview"]; }
+
+inputbar {
+    spacing: 10px; padding: 15px;
+    background-color: @on-primary;
+    children: ["prompt","dummy"];
+}
+
+prompt { background-color: @selected; text-color: @background; padding: 8px 15px; border-radius: 20px; }
+dummy  { expand: true; background-color: transparent; }
+
+entry {
+    background-color: inherit; text-color: @urgent;
+    cursor: text; placeholder: "Enter the link..."; placeholder-color: @selected;
+}
+
+listview {
+    columns: 1; lines: 5; cycle: true; scrollbar: false;
+    spacing: 6px; margin: 10px;
+    background-color: transparent; text-color: @foreground;
+}
+
+element { spacing: 10px; padding: 10px; border-radius: 8px; background-color: transparent; text-color: @foreground; cursor: pointer; }
+element normal.normal    { background-color: @background;     text-color: @foreground; }
+element alternate.normal { background-color: @background-alt; text-color: @foreground; }
+element selected.normal  { background-color: @selected;       text-color: @background; }
+element-text { background-color: transparent; text-color: inherit; vertical-align: 0.5; horizontal-align: 0.0; }

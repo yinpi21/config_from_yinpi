@@ -1,0 +1,16 @@
+# Emacs backups & auto-save
+*~
+\#*\#
+.#*
+
+# Matugen outputs (générés à runtime, pas dans le repo)
+config/alacritty/colors.toml
+config/i3/colors.conf
+config/qt5ct/colors/matugen.conf
+config/qt6ct/colors/matugen.conf
+config/polybar/colors.ini
+config/rofi/colors.rasi
+config/dunst/dunstrc
+config/gtk-3.0/colors.css
+config/gtk-4.0/colors.css
+config/flameshot/flameshot.ini

@@ -1,0 +1,139 @@
+[user]
+    name = Yinpi
+    email = frederic.lin@epita.fr
+    # email = yinpi21@gmail.com
+
+[core]
+    editor = vim
+    excludesfile = ~/.gitignore
+    autocrlf = input
+
+[color]
+    ui = auto
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+
+[apply]
+    whitespace = fix
+
+[alias]
+    # Raccourcis standards
+    st = status -sb
+    s = status -sb
+    lg = log --oneline --graph --decorate --all --color
+    lgs = log --graph --oneline --all --color --decorate --simplify-by-decoration
+    # Branch management
+    co = switch
+    cob = switch -c
+    br = branch -vv
+    rem = remote -v
+    brn = branch -m
+    bd = branch -d
+    bD = branch -D
+    
+    # Q: Quick Commit
+    # Commit tout et pousse explicitement la branche courante (HEAD)
+    q = "!f(){ \
+        msg=\"$*\"; \
+        if [ -z \"$msg\" ]; then \
+            git add -A && git commit -m \"update\" && git push origin HEAD; \
+        else \
+            git add -A && git commit -m \"$msg\" && git push origin HEAD; \
+        fi; \
+    }; f"
+
+    # QT: Quick Tag (Commit + Push Branch + Push Tag)
+    # 1. Commit
+    # 2. Tag (Nom propre ou Timestampé)
+    # 3. Push de la branche (HEAD) pour être sûr que le commit est sync
+    # 4. Push du tag spécifique
+    qt = "!f(){ \
+        msg=\"$*\"; \
+        if [ -z \"$msg\" ]; then \
+            msg=\"update\"; \
+            tag_name=\"update.$(date +%Y%m%d%H%M%S)\"; \
+        else \
+            ts=$(date +%Y%m%d%H%M%S); \
+        tag_name=$(echo \"$msg\" | sed \"s/\\*/$ts/g\" | tr ' :' '--' | tr -cd '[:alnum:]_-' | sed 's/--*/-/g'); \
+        fi; \
+        git add -A && git commit -m \"$msg\" && git tag \"$tag_name\" && git push origin HEAD && git push origin \"$tag_name\"; \
+    }; f"
+
+    # T: Tag Only (Push Branch + Push Tag)
+    # Pousse aussi la branche (HEAD) pour garantir que le commit tagué est bien sur le serveur
+    t = "!f(){ \
+        msg=\"$*\"; \
+        if [ -z \"$msg\" ]; then \
+            msg=\"update\"; \
+            tag_name=\"update.$(date +%Y%m%d%H%M%S)\"; \
+        else \
+            ts=$(date +%Y%m%d%H%M%S); \
+        tag_name=$(echo \"$msg\" | sed \"s/\\*/$ts/g\" | tr ' :' '--' | tr -cd '[:alnum:]_-' | sed 's/--*/-/g'); \
+        fi; \
+        git tag \"$tag_name\" && git push origin HEAD && git push origin \"$tag_name\"; \
+    }; f"
+
+    # DT: Delete Tag
+    dt = "!f(){ \
+        tag=$(git describe --tags --abbrev=0 2>/dev/null); \
+        if [ -z \"$tag\" ]; then \
+            echo \"Aucun tag trouvé.\"; \
+        else \
+            echo \"Suppression du tag $tag...\"; \
+            git tag -d \"$tag\" && \
+            git push origin --delete \"$tag\"; \
+        fi; \
+    }; f"
+
+    pub = "!git push -u origin HEAD"
+    unpub = push origin --delete
+    prune-branches = "!git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D"
+
+[init]
+    defaultBranch = main
+
+[help]
+    autocorrect = prompt
+
+[diff]
+    algorithm = histogram
+    colorMoved = default
+
+[merge]
+    # requires git >= 2.35
+    conflictstyle = zdiff3
+
+[commit]
+    verbose = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
+
+[fetch]
+    prune = true
+
+[branch]
+    autosetuprebase = always
+    sort = -committerdate
+
+[rebase]
+    autoSquash = true
+    autoStash = true
+
+[rerere]
+    enabled = true
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+[safe]
+    directory = /home/yinpi/AFS/*
