@@ -1,8 +1,0 @@
-(づ ◕‿‿◕)づ ~/afs/config $ cat ~/.config/i3/colors.conf 2>/dev/null | grep -i papirus
-(づ ◕‿‿◕)づ ~/afs/config [✗ 1] $ head -5 ~/.config/i3/colors.conf
-# target                 title                                              bg                                         text                                       indicator                                          border
-client.focused           #ffb2b8                     #1a1112             #f0dedf          #ffb2b8                     #ffb2b8
-client.focused_inactive  #3d3233   #1a1112             #f0dedf          #3d3233   #3d3233
-client.unfocused         #3d3233   #1a1112             #f0dedf          #3d3233   #3d3233
-client.urgent            #ffb4ab                       #1a1112             #ffb4ab               #3d3233   #ffb4ab
-(づ ◕‿‿◕)づ ~/afs/config $

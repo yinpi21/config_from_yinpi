@@ -1,4 +1,0 @@
-(づ ◕‿‿◕)づ ~/afs/config $ grep -rn "papirus" ~/.config/i3/
-(づ ◕‿‿◕)づ ~/afs/config [✗ 1] $ readlink ~/.config/i3/config
-/home/frederic.lin/afs/config/config/i3/config_epita
-(づ ◕‿‿◕)づ ~/afs/config $
