@@ -1,24 +1,28 @@
-╭  ~
-╰─ curl -Ls https://raw.githubusercontent.com/yinpi21/config_from_yinpi/main/install.sh | bash
-→  Repo déjà présent, mise à jour...
-Already up to date.
-✓  Repo à jour
-→  Déploiement de la config...
-✓  Config déployée
-✓  ~/.bashrc déjà configuré
 
-────────────────────────────────────────────
- Installation terminée !
 
- Prochaines étapes :
-  1. source ~/.bashrc
-  2. Choisir un wallpaper : bg
-  3. Recharger i3 : $mod+Shift+r
-────────────────────────────────────────────
 
-╭  ~
-╰─ source ~/.bashrc
 
-╭  ~
-╰─ qwert
-zsh: command not found: qwert
+ERROR: Received ConfigureNotify for unknown window 0x00800000
+ERROR: Received ExposeEvent for unknown window 0x00800000
+ERROR: Received ConfigureNotify for unknown window 0x00800000
+ERROR: Received ConfigureNotify for unknown window 0x0080000b
+ERROR: Received ExposeEvent for unknown window 0x0080000b
+ERROR: Received ConfigureNotify for unknown window 0x0080000b
+ERROR: Received ConfigureNotify for unknown window 0x0080000b
+ERROR: Received ExposeEvent for unknown window 0x0080000b
+ERROR: Received ConfigureNotify for unknown window 0x0080000b
+ERROR: Expected one of these tokens: <end>, '[', 'move', 'exec', 'exit', 'restart', 'reload', 'shmlog', 'debuglog', 'border', 'layout', 'append_layout', 'workspace', 'focus', 'kill', 'open', 'fullscreen', 'sticky', 'split', 'floating', 'mark', 'unmark', 'resize', 'rename', 'nop', 'scratchpad', 'swap', 'title_format', 'title_window_icon', 'mode', 'bar', 'gaps'
+ERROR: Your command: exec --no-startup-id bash -c '[ ! -d $HOME/Obsidian ] && git clone git@github.com:yinpi21/Obsidian.git $HOME/Obsidian; NIXPKGS_ALLOW_UNFREE=1 nix-shell -p obsidian --run "obsidian $HOME/Obsidian"'
+ERROR:                                                                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/run/user/27881/i3/errorlog.2175 (END)
+
+
+
+
+
+
+
+
+
+(づ ◕‿‿◕)づ ~/afs \[\e[31m\][✗ 130]\[\e[0m\] [24s] $
+

@@ -26,8 +26,8 @@ no_focus    [title="fbgif"]
 exec --no-startup-id bash "$HOME/afs/config/setup-school.sh"
 exec --no-startup-id bash -c 'command -v fzf &>/dev/null || nix-env -f "<nixpkgs>" -iA fzf; command -v fd &>/dev/null || nix-env -f "<nixpkgs>" -iA fd'
 
-# Clavier Optimot
-exec_always --no-startup-id setxkbmap optimot -variant basic
+# Clavier Optimot (via xkbcomp + nix shell car layout non installé system-wide)
+exec_always --no-startup-id sh $scripts/system/load_keyboard.sh
 
 # XDG autostart (.desktop files)
 exec --no-startup-id dex --autostart --environment i3
@@ -134,7 +134,7 @@ bindsym $mod+Shift+t exec --no-startup-id nix-shell -p xfce.thunar --run thunar
 bindsym $mod+Shift+o exec --no-startup-id firefox 'https://outlook.office.com/mail/?culture=fr-fr&country=fr'
 bindsym $mod+Shift+p exec --no-startup-id pavucontrol
 bindsym $mod+b       exec --no-startup-id blueman-manager
-bindsym $mod+o       exec --no-startup-id bash -c '[ ! -d $HOME/Obsidian ] && git clone git@github.com:yinpi21/Obsidian.git $HOME/Obsidian; NIXPKGS_ALLOW_UNFREE=1 nix-shell -p obsidian --run "obsidian $HOME/Obsidian"'
+bindsym $mod+o       exec --no-startup-id sh $scripts/system/obsidian.sh
 
 # Note rapide dans emacs (fenêtre flottante)
 bindsym $mod+n exec --no-startup-id alacritty --class "float_window" -e sh $scripts/system/note.sh
