@@ -181,98 +181,22 @@ export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --e
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # ────────────────────────────────────────────────
+# ────────────────────────────────────────────────
 # 12. Prompt
 # ────────────────────────────────────────────────
 
-# Cache le git root pour éviter de l'appeler plusieurs fois par prompt
-_PROMPT_GIT_ROOT=""
-
-# Chemin intelligent : repo/…/fichier ou .../avant-dernier/dernier
-_prompt_path() {
-    local r="$_PROMPT_GIT_ROOT"
-    if [ -n "$r" ]; then
-        local repo git_rel
-        repo=$(basename "$r")
-        git_rel="${PWD#$r}"
-        git_rel="${git_rel#/}"
-        if [ -z "$git_rel" ]; then
-            echo "$repo"
-        else
-            local IFS='/' parts=()
-            read -ra parts <<< "$git_rel"
-            local n=${#parts[@]}
-            if [ "$n" -le 3 ]; then echo "${repo}/${git_rel}"
-            else echo "${repo}/.../${parts[$n-1]}"
-            fi
-        fi
-    else
-        [ "$PWD" = "$HOME" ] && { echo "yinpi"; return; }
-        local p="${PWD/#$HOME/\~}"
-        local IFS='/' parts=()
-        read -ra parts <<< "$p"
-        local n=${#parts[@]}
-        if [ "$n" -le 3 ]; then echo "$p"
-        else echo ".../${parts[$n-2]}/${parts[$n-1]}"
-        fi
+# Chemin raccourci — purs builtins bash, zéro commande externe
+_pp() {
+    local p="${PWD/#$HOME/\~}"
+    local IFS='/' parts=()
+    read -ra parts <<< "$p"
+    local n=${#parts[@]}
+    if [ $n -le 3 ]; then echo "$p"
+    else echo "${parts[0]}/\u2026/${parts[$n-1]}"
     fi
 }
 
-# Branche + * si dirty
-_prompt_git() {
-    [ -z "$_PROMPT_GIT_ROOT" ] && return
-    local branch dirty=""
-    branch=$(GIT_OPTIONAL_LOCKS=0 git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
-    [ -n "$(GIT_OPTIONAL_LOCKS=0 git status --porcelain 2>/dev/null)" ] && dirty="*"
-    echo " (${branch}${dirty})"
-}
+# Capture le code de sortie avant que PS1 l'écrase
+PROMPT_COMMAND='_e=$?'
 
-# Langages détectés dans le dossier courant + racine du projet
-_prompt_langs() {
-    [ -z "$_PROMPT_GIT_ROOT" ] && return
-    local langs="" d="$PWD" r="$_PROMPT_GIT_ROOT"
-
-    shopt -s nullglob
-    local c_files=("$d"/*.c "$d"/*.h)
-    local cpp_files=("$d"/*.cpp "$d"/*.cc "$d"/*.cxx "$d"/*.hpp)
-    local py_files=("$d"/*.py)
-    local ml_files=("$d"/*.ml "$d"/*.mli)
-    local lisp_files=("$d"/*.lisp "$d"/*.cl "$d"/*.asd)
-    local java_files=("$d"/*.java)
-    local js_files=("$d"/*.js "$d"/*.ts "$d"/*.jsx "$d"/*.tsx)
-    shopt -u nullglob
-
-    [ ${#c_files[@]}    -gt 0 ]                                                         && langs="$langs [c]"
-    { [ ${#cpp_files[@]} -gt 0 ] || [ -f "$r/CMakeLists.txt" ]; }                      && langs="$langs [c++]"
-    { [ ${#py_files[@]}  -gt 0 ] || [ -f "$r/requirements.txt" ] || [ -f "$r/pyproject.toml" ]; } && langs="$langs [py]"
-    [ -f "$r/Cargo.toml" ]                                                              && langs="$langs [rs]"
-    { [ ${#js_files[@]}  -gt 0 ] || [ -f "$r/package.json" ]; }                        && langs="$langs [js]"
-    { [ ${#ml_files[@]}  -gt 0 ] || [ -f "$r/dune" ] || [ -f "$r/dune-project" ]; }   && langs="$langs [ml]"
-    [ ${#lisp_files[@]}  -gt 0 ]                                                        && langs="$langs [lisp]"
-    { [ ${#java_files[@]} -gt 0 ] || [ -f "$r/pom.xml" ] || [ -f "$r/build.gradle" ]; } && langs="$langs [java]"
-
-    echo "$langs"
-}
-
-# Pré-initialise le cache PWD pour éviter git au premier prompt
-_PROMPT_LAST_PWD="$PWD"
-_PROMPT_GIT_ROOT=""
-
-# Timer : démarre à chaque commande
-trap '_PROMPT_TIMER=${_PROMPT_TIMER:-$SECONDS}' DEBUG
-
-# PROMPT_COMMAND : capture exit code, calcule le timer, rafraîchit le git root
-# Le git root n'est recalculé que si le répertoire courant change
-PROMPT_COMMAND='
-_PROMPT_EXIT=$?
-_PROMPT_ELAPSED=$(( SECONDS - ${_PROMPT_TIMER:-$SECONDS} ))
-unset _PROMPT_TIMER
-if [ "$_PROMPT_LAST_PWD" != "$PWD" ]; then
-    _PROMPT_GIT_ROOT=$(GIT_OPTIONAL_LOCKS=0 git rev-parse --show-toplevel 2>/dev/null)
-    _PROMPT_LAST_PWD="$PWD"
-fi
-'
-
-_prompt_exit()  { [ "$_PROMPT_EXIT"    -ne 0 ] && printf " \001\e[31m\002[✗ %s]\001\e[0m\002" "$_PROMPT_EXIT"; }
-_prompt_timer() { [ "${_PROMPT_ELAPSED:-0}" -ge 2 ] && printf " [%ss]" "$_PROMPT_ELAPSED"; }
-
-PS1='(づ ◕‿‿◕)づ \[\e[32m\]$(_prompt_path)\[\e[0m\]\[\e[33m\]$(_prompt_git)\[\e[0m\]\[\e[36m\]$(_prompt_langs)\[\e[0m\]$(_prompt_exit)$(_prompt_timer) $ '
+PS1='(づ ◕‿‿◕)づ \[\e[32m\]$(_pp)\[\e[0m\]$([ $_e -ne 0 ] && printf " \[\e[31m\][✗ %s]\[\e[0m\]" "$_e") \$ '
