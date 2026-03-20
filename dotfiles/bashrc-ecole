@@ -228,7 +228,8 @@ _prompt_git() {
 
 # Langages détectés dans le dossier courant + racine du projet
 _prompt_langs() {
-    local langs="" d="$PWD" r="${_PROMPT_GIT_ROOT:-$PWD}"
+    [ -z "$_PROMPT_GIT_ROOT" ] && return
+    local langs="" d="$PWD" r="$_PROMPT_GIT_ROOT"
 
     shopt -s nullglob
     local c_files=("$d"/*.c "$d"/*.h)
