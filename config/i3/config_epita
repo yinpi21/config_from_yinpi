@@ -29,9 +29,6 @@ exec --no-startup-id bash -c 'command -v fzf &>/dev/null || nix-env -f "<nixpkgs
 # Clavier Optimot (via xkbcomp + nix shell car layout non installé system-wide)
 exec_always --no-startup-id sh $scripts/system/load_keyboard.sh
 
-# XDG autostart (.desktop files)
-exec --no-startup-id dex --autostart --environment i3
-
 # Autotiling
 exec_always --no-startup-id autotiling
 

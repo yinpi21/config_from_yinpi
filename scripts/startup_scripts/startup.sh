@@ -20,7 +20,6 @@ if [ ! -x "$HOME/.nix-profile/bin/bat" ]; then
     dunstify -r "$IDB" -t 0 "Installing additional packages..."
     PACKAGES="
     nixpkgs#autotiling
-    nixpkgs#papirus-icon-theme
     nixpkgs#bat
     nixpkgs#adw-gtk3
     nixpkgs#pqiv
