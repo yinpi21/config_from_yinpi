@@ -150,7 +150,7 @@ SCRIPTS="$REPO/scripts"
 WALLPAPERS="$CONFS/wallpapers"
 
 update-conf() {
-    sh "$SCRIPTS/system/update_config.sh" && source ~/.bashrc
+    sh "$SCRIPTS/system/update_config.sh" && exec bash
 }
 
 alias reset-conf="bash \"$REPO/setup-school.sh\""

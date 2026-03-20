@@ -31,7 +31,7 @@ ln -sf "$REPO/dotfiles/.gitconfig"    "$HOME/.gitconfig"
 ln -sf "$REPO/dotfiles/.vimrc"        "$CONFS/vimrc"
 ln -sf "$REPO/dotfiles/.bash_aliases" "$HOME/.bash_aliases"
 ln -sf "$REPO/dotfiles/gdbinit"       "$CONFS/gdbinit"
-ln -sf "$REPO/Optimot/.XCompose"      "$HOME/.XCompose"
+cp    "$REPO/Optimot/.XCompose"        "$HOME/.XCompose"
 
 # ── Emacs ─────────────────────────────────────────────────────────────
 ln -sf "$REPO/emacs/init.el" "$HOME/.emacs.d/init.el"

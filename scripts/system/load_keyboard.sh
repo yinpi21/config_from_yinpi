@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ln -sf "$HOME/afs/config/Optimot/.XCompose" "$HOME/.XCompose"
+cp "$HOME/afs/config/Optimot/.XCompose" "$HOME/.XCompose"
 
 export GTK_IM_MODULE=xim
 export QT_IM_MODULE=xim
