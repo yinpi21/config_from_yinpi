@@ -1,0 +1,24 @@
+╭  ~
+╰─ curl -Ls https://raw.githubusercontent.com/yinpi21/config_from_yinpi/main/install.sh | bash
+→  Repo déjà présent, mise à jour...
+Already up to date.
+✓  Repo à jour
+→  Déploiement de la config...
+✓  Config déployée
+✓  ~/.bashrc déjà configuré
+
+────────────────────────────────────────────
+ Installation terminée !
+
+ Prochaines étapes :
+  1. source ~/.bashrc
+  2. Choisir un wallpaper : bg
+  3. Recharger i3 : $mod+Shift+r
+────────────────────────────────────────────
+
+╭  ~
+╰─ source ~/.bashrc
+
+╭  ~
+╰─ qwert
+zsh: command not found: qwert

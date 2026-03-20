@@ -41,14 +41,18 @@ info "Déploiement de la config..."
 bash "$DEST/setup-school.sh"
 ok "Config déployée"
 
-# ── Hook bashrc ───────────────────────────────────────────────────────
-BASHRC_LINE='[ -f "$HOME/afs/.confs/bashrc" ] && source "$HOME/afs/.confs/bashrc"'
-if ! grep -qF 'afs/.confs/bashrc' "$HOME/.bashrc" 2>/dev/null; then
-    printf '\n# Config yinpi\n%s\n' "$BASHRC_LINE" >> "$HOME/.bashrc"
-    ok "Ligne ajoutée dans ~/.bashrc"
-else
-    ok "~/.bashrc déjà configuré"
-fi
+# ── Hook shell rc (bash + zsh) ────────────────────────────────────────
+SOURCE_LINE='[ -f "$HOME/afs/.confs/bashrc" ] && source "$HOME/afs/.confs/bashrc"'
+hooked=0
+for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    [ -f "$rc" ] || continue
+    if ! grep -qF 'afs/.confs/bashrc' "$rc" 2>/dev/null; then
+        printf '\n# Config yinpi\n%s\n' "$SOURCE_LINE" >> "$rc"
+        ok "Ligne ajoutée dans $rc"
+        hooked=1
+    fi
+done
+[ "$hooked" -eq 0 ] && ok "Shell rc déjà configuré"
 
 # ── Résumé ────────────────────────────────────────────────────────────
 echo ""
